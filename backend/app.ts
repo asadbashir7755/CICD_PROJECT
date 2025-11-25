@@ -28,6 +28,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // API route
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.use('/api/posts', postsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
