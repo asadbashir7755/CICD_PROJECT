@@ -1,0 +1,715 @@
+
+> test
+> NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose --coverage
+
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+(node:45258) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+FAIL tests/unit/controllers/posts-controller.test.ts
+  createPostHandler
+    ✕ Post creation: Success - All fields are valid (10 ms)
+    ✕ Post creation: Failure - Invalid image url (5 ms)
+    ✕ Post creation: Failure - Some fields are missing (3 ms)
+    ✕ Post creation: Failure - Too Many Categories (2 ms)
+    ✕ Post creation: Failure - Internal server error (16 ms)
+  getAllPostsHandler
+    ✕ Get all posts: Success - Retrieving all posts list (2 ms)
+    ✕ Get all posts: Failure - Internal Server Error (2 ms)
+  getFeaturedPostsHandler
+    ✕ Get featured posts: Success - Retrieving all featured posts list (3 ms)
+    ✕ Get featured posts: Failure - Internal Server Error (3 ms)
+  getPostByCategoryHandler
+    ✕ Get posts by category: Success - Retrieving posts list of specified category (3 ms)
+    ✓ Get posts by category: Failure - Invalid category (3 ms)
+    ✕ Get posts by category: Failure - Internal Server Error (2 ms)
+  getLatestPostsHandler
+    ✕ Get latest posts: Success - Retrieving most recent posts list (1 ms)
+    ✕ Get latest posts: Failure - Internal Server Error (2 ms)
+  getPostByIdHandler
+    ✕ Get post by ID: Success - Retrieving Specific Post (1 ms)
+    ✕ Get post by ID: Failure - Post not found (Specified post ID is invalid) (1 ms)
+    ✕ Get post by ID: Failure - Internal Server Error (2 ms)
+  updatePostHandler
+    ✕ Update post: Success - Modifying post content (2 ms)
+    ✕ Update post: Failure - Post not found (Specified post ID is invalid) (1 ms)
+    ✕ Update post: Failure - Internal Server Error (2 ms)
+  deletePostByIdHandler
+    ✕ Delete Post: Success - Removing Post with specified ID (2 ms)
+    ✕ Delete Post: Failure - Post not found (Specified post ID is invalid) (2 ms)
+    ✕ Delete Post: Failure - Internal Server Error (2 ms)
+
+  ● createPostHandler › Post creation: Success - All fields are valid
+
+    expect(received).toHaveBeenCalledTimes(expected)
+
+    Matcher error: received value must be a mock or spy function
+
+    Received has type:  function
+    Received has value: [Function model]
+
+      36 |     await createPostHandler(req, res);
+      37 |
+    > 38 |     expect(Post).toHaveBeenCalledTimes(1);
+         |                  ^
+      39 |     expect(Post).toHaveBeenCalledWith(postObject);
+      40 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.OK);
+      41 |     expect(res.json).toHaveBeenCalledWith(postObject);
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:38:18)
+
+  ● createPostHandler › Post creation: Failure - Invalid image url
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 400
+    Received
+           1: 500
+           2: 500
+
+    Number of calls: 2
+
+      50 |     await createPostHandler(req, res);
+      51 |
+    > 52 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+         |                        ^
+      53 |     expect(res.json).toHaveBeenCalledWith({
+      54 |       message: RESPONSE_MESSAGES.POSTS.INVALID_IMAGE_URL,
+      55 |     });
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:52:24)
+
+  ● createPostHandler › Post creation: Failure - Some fields are missing
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 400
+    Received
+           1: 500
+           2: 500
+           3: 500
+
+    Number of calls: 3
+
+      65 |     await createPostHandler(req, res);
+      66 |
+    > 67 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+         |                        ^
+      68 |     expect(res.json).toHaveBeenCalledWith({ message: RESPONSE_MESSAGES.COMMON.REQUIRED_FIELDS });
+      69 |   });
+      70 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:67:24)
+
+  ● createPostHandler › Post creation: Failure - Too Many Categories
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 400
+    Received
+           1: 500
+           2: 500
+           3: 500
+
+    Number of calls: 4
+
+      77 |     await createPostHandler(req, res);
+      78 |
+    > 79 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+         |                        ^
+      80 |     expect(res.json).toHaveBeenCalledWith({
+      81 |       message: RESPONSE_MESSAGES.POSTS.MAX_CATEGORIES,
+      82 |     });
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:79:24)
+
+  ● createPostHandler › Post creation: Failure - Internal server error
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: {"message": "Internal Server Error"}
+    Received
+           1
+              Object {
+            -   "message": "Internal Server Error",
+            +   "message": [TypeError: Cannot read properties of undefined (reading '_id')],
+              },
+           2
+              Object {
+            -   "message": "Internal Server Error",
+            +   "message": [TypeError: Cannot read properties of undefined (reading '_id')],
+              },
+           3
+              Object {
+            -   "message": "Internal Server Error",
+            +   "message": [TypeError: Cannot read properties of undefined (reading '_id')],
+              },
+
+    Number of calls: 5
+
+      92 |
+      93 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    > 94 |     expect(res.json).toHaveBeenCalledWith({
+         |                      ^
+      95 |       message: RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR,
+      96 |     });
+      97 |   });
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:94:22)
+
+  ● getAllPostsHandler › Get all posts: Success - Retrieving all posts list
+
+    TypeError: Post.find.mockResolvedValue is not a function
+
+      108 |     ];
+      109 |
+    > 110 |     (Post as any).find.mockResolvedValue(mockPosts);
+          |                        ^
+      111 |
+      112 |     await getAllPostsHandler(req, res);
+      113 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:110:24)
+
+  ● getAllPostsHandler › Get all posts: Failure - Internal Server Error
+
+    TypeError: Post.find.mockRejectedValueOnce is not a function
+
+      118 |   it('Get all posts: Failure - Internal Server Error', async () => {
+      119 |     const req: any = createRequestObject();
+    > 120 |     (Post as any).find.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                        ^
+      121 |     await getAllPostsHandler(req, res);
+      122 |
+      123 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:120:24)
+
+  ● getFeaturedPostsHandler › Get featured posts: Success - Retrieving all featured posts list
+
+    TypeError: Post.find.mockResolvedValue is not a function
+
+      138 |     ];
+      139 |
+    > 140 |     (Post as any).find.mockResolvedValue(mockFeaturedPosts);
+          |                        ^
+      141 |
+      142 |     await getFeaturedPostsHandler(req, res);
+      143 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:140:24)
+
+  ● getFeaturedPostsHandler › Get featured posts: Failure - Internal Server Error
+
+    TypeError: Post.find.mockRejectedValueOnce is not a function
+
+      148 |   it('Get featured posts: Failure - Internal Server Error', async () => {
+      149 |     const req: any = createRequestObject();
+    > 150 |     (Post as any).find.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                        ^
+      151 |     await getFeaturedPostsHandler(req, res);
+      152 |
+      153 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:150:24)
+
+  ● getPostByCategoryHandler › Get posts by category: Success - Retrieving posts list of specified category
+
+    TypeError: Post.find.mockResolvedValue is not a function
+
+      168 |     ];
+      169 |
+    > 170 |     (Post as any).find.mockResolvedValue(mockPosts);
+          |                        ^
+      171 |
+      172 |     await getPostByCategoryHandler(req, res);
+      173 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:170:24)
+
+  ● getPostByCategoryHandler › Get posts by category: Failure - Internal Server Error
+
+    TypeError: Post.find.mockRejectedValueOnce is not a function
+
+      188 |     const req: any = createRequestObject({ params: { category: validCategories[1] } });
+      189 |
+    > 190 |     (Post as any).find.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                        ^
+      191 |
+      192 |     await getPostByCategoryHandler(req, res);
+      193 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:190:24)
+
+  ● getLatestPostsHandler › Get latest posts: Success - Retrieving most recent posts list
+
+    TypeError: Post.find.mockResolvedValueOnce is not a function
+
+      209 |     ];
+      210 |
+    > 211 |     (Post as any).find.mockResolvedValueOnce(mockPosts);
+          |                        ^
+      212 |
+      213 |     await getLatestPostsHandler(req, res);
+      214 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:211:24)
+
+  ● getLatestPostsHandler › Get latest posts: Failure - Internal Server Error
+
+    TypeError: Post.find.mockRejectedValueOnce is not a function
+
+      220 |     const req: any = createRequestObject();
+      221 |
+    > 222 |     (Post as any).find.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                        ^
+      223 |
+      224 |     await getLatestPostsHandler(req, res);
+      225 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:222:24)
+
+  ● getPostByIdHandler › Get post by ID: Success - Retrieving Specific Post
+
+    TypeError: Post.findById.mockResolvedValueOnce is not a function
+
+      237 |     const mockPost: any = createPostObject({ _id: '6910293383' });
+      238 |
+    > 239 |     (Post as any).findById.mockResolvedValueOnce(mockPost);
+          |                            ^
+      240 |
+      241 |     await getPostByIdHandler(req, res);
+      242 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:239:28)
+
+  ● getPostByIdHandler › Get post by ID: Failure - Post not found (Specified post ID is invalid)
+
+    TypeError: Post.findById.mockResolvedValue is not a function
+
+      248 |     const req: any = createRequestObject({ params: { id: '6910293383' } });
+      249 |
+    > 250 |     (Post as any).findById.mockResolvedValue(null);
+          |                            ^
+      251 |
+      252 |     await getPostByIdHandler(req, res);
+      253 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:250:28)
+
+  ● getPostByIdHandler › Get post by ID: Failure - Internal Server Error
+
+    TypeError: Post.findById.mockRejectedValueOnce is not a function
+
+      259 |     const req: any = createRequestObject({ params: { id: '6910293383' } });
+      260 |
+    > 261 |     (Post as any).findById.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                            ^
+      262 |
+      263 |     await getPostByIdHandler(req, res);
+      264 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:261:28)
+
+  ● updatePostHandler › Update post: Success - Modifying post content
+
+    TypeError: Post.findByIdAndUpdate.mockResolvedValueOnce is not a function
+
+      280 |
+      281 |     // Mock the behavior of Post.findByIdAndUpdate
+    > 282 |     (Post as any).findByIdAndUpdate.mockResolvedValueOnce(mockPost);
+          |                                     ^
+      283 |
+      284 |     await updatePostHandler(req, res);
+      285 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:282:37)
+
+  ● updatePostHandler › Update post: Failure - Post not found (Specified post ID is invalid)
+
+    TypeError: Post.findByIdAndUpdate.mockResolvedValueOnce is not a function
+
+      295 |
+      296 |     // Mock the behavior of Post.findByIdAndUpdate
+    > 297 |     (Post as any).findByIdAndUpdate.mockResolvedValueOnce(null);
+          |                                     ^
+      298 |
+      299 |     await updatePostHandler(req, res);
+      300 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:297:37)
+
+  ● updatePostHandler › Update post: Failure - Internal Server Error
+
+    TypeError: Post.findByIdAndUpdate.mockRejectedValueOnce is not a function
+
+      309 |     });
+      310 |     // Mock the behavior of Post.findByIdAndUpdate
+    > 311 |     (Post as any).findByIdAndUpdate.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                                     ^
+      312 |     await updatePostHandler(req, res);
+      313 |
+      314 |     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:311:37)
+
+  ● deletePostByIdHandler › Delete Post: Success - Removing Post with specified ID
+
+    TypeError: Post.findByIdAndDelete.mockResolvedValueOnce is not a function
+
+      326 |
+      327 |     // Mock the behavior of Post.findByIdAndRemove
+    > 328 |     (Post as any).findByIdAndDelete.mockResolvedValueOnce(mockPost);
+          |                                     ^
+      329 |
+      330 |     await deletePostByIdHandler(req, res);
+      331 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:328:37)
+
+  ● deletePostByIdHandler › Delete Post: Failure - Post not found (Specified post ID is invalid)
+
+    TypeError: Post.findByIdAndDelete.mockRejectedValueOnce is not a function
+
+      341 |     // Mock the behavior of Post.findByIdAndRemove
+      342 |
+    > 343 |     (Post as any).findByIdAndDelete.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                                     ^
+      344 |
+      345 |     await deletePostByIdHandler(req, res);
+      346 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:343:37)
+
+  ● deletePostByIdHandler › Delete Post: Failure - Internal Server Error
+
+    TypeError: Post.findByIdAndDelete.mockRejectedValueOnce is not a function
+
+      353 |
+      354 |     // Mock the behavior of Post.findByIdAndRemove
+    > 355 |     (Post as any).findByIdAndDelete.mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+          |                                     ^
+      356 |
+      357 |     await deletePostByIdHandler(req, res);
+      358 |
+
+      at Object.<anonymous> (tests/unit/controllers/posts-controller.test.ts:355:37)
+
+  console.log
+    🚀 Starting server...
+
+      at server.ts:9:9
+
+  console.log
+    📡 Connecting to databases...
+
+      at startServer (server.ts:15:13)
+
+FAIL tests/integration/controllers/posts-controller.test.ts
+  Integration Tests: Post creation
+    ✕ Post creation: Success - All fields are valid (5 ms)
+    ✕ Post creation: Failure - Missing required fields (9 ms)
+    ✕ Post creation: Failure - Invalid category count (2 ms)
+    ✕ Post creation: Failure - Invalid image URL format (2 ms)
+    ✕ Post creation: Failure - Internal server error (3 ms)
+  Integration Tests: Get all posts
+    ✕ Get all posts: Success (3 ms)
+  Integration Tests: Get all posts by category
+    ✕ Get all posts by category: Success (2 ms)
+    ✕ Get all posts by category: Failure - Invalid category (1 ms)
+  Integration Tests: Get all featured posts
+    ✕ Get all featured posts: Success (2 ms)
+  Integration Tests: Get all latest posts
+    ✕ Get all latest posts: Success (3 ms)
+  Integration Tests: Update Post
+    ✕ Update Post: Success - Update Post of existing ID (3 ms)
+    ✕ Update Post: Failure - Invalid post ID (3 ms)
+  Integration Tests: Delete Post
+    ✕ Delete Post: Success - Removing Post with specific ID (2 ms)
+    ✕ Delete Post: Failure - Invalid post ID (1 ms)
+
+  ● Integration Tests: Post creation › Post creation: Success - All fields are valid
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      14 | describe('Integration Tests: Post creation', () => {
+      15 |   it('Post creation: Success - All fields are valid', async () => {
+    > 16 |     const response = await request(server).post('/api/posts').send(createPostObject());
+         |                                            ^
+      17 |     postId = response.body._id;
+      18 |     const fetchedPost = await Post.findById(postId);
+      19 |
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as post] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:16:44)
+
+  ● Integration Tests: Post creation › Post creation: Failure - Missing required fields
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      27 |     const postObject = createPostObject();
+      28 |     delete postObject.title;
+    > 29 |     const response = await request(server).post('/api/posts').send(postObject);
+         |                                            ^
+      30 |
+      31 |     expect(JSON.parse(response.text)).toEqual({
+      32 |       message: RESPONSE_MESSAGES.COMMON.REQUIRED_FIELDS,
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as post] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:29:44)
+
+  ● Integration Tests: Post creation › Post creation: Failure - Invalid category count
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      39 |       categories: [validCategories[0], validCategories[1], validCategories[2], validCategories[3]],
+      40 |     });
+    > 41 |     const response = await request(server).post('/api/posts').send(postObject);
+         |                                            ^
+      42 |
+      43 |     expect(JSON.parse(response.text)).toEqual({
+      44 |       message: RESPONSE_MESSAGES.POSTS.MAX_CATEGORIES,
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as post] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:41:44)
+
+  ● Integration Tests: Post creation › Post creation: Failure - Invalid image URL format
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      51 |       imageLink: 'https://www.invalid-image.gif',
+      52 |     });
+    > 53 |     const response = await request(server).post('/api/posts').send(postObject);
+         |                                            ^
+      54 |
+      55 |     expect(JSON.parse(response.text)).toEqual({
+      56 |       message: RESPONSE_MESSAGES.POSTS.INVALID_IMAGE_URL,
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as post] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:53:44)
+
+  ● Integration Tests: Post creation › Post creation: Failure - Internal server error
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      66 |
+      67 |     const postObject = createPostObject();
+    > 68 |     const response = await request(server).post('/api/posts').send(postObject);
+         |                                            ^
+      69 |
+      70 |     expect(response.status).toBe(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      71 |     expect(JSON.parse(response.text)).toEqual({
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as post] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:68:44)
+
+  ● Integration Tests: Get all posts › Get all posts: Success
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      76 | describe('Integration Tests: Get all posts', () => {
+      77 |   it('Get all posts: Success', async () => {
+    > 78 |     const response = await request(server).get('/api/posts');
+         |                                            ^
+      79 |
+      80 |     expect(response.status).toBe(HTTP_STATUS.OK);
+      81 |     expect(response.body).toBeInstanceOf(Array);
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as get] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:78:44)
+
+  ● Integration Tests: Get all posts by category › Get all posts by category: Success
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      85 |   it('Get all posts by category: Success', async () => {
+      86 |     const category = validCategories[0];
+    > 87 |     const response = await request(server).get(`/api/posts/categories/${category}`);
+         |                                            ^
+      88 |
+      89 |     expect(response.status).toBe(HTTP_STATUS.OK);
+      90 |     expect(response.body).toBeInstanceOf(Array);
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as get] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:87:44)
+
+  ● Integration Tests: Get all posts by category › Get all posts by category: Failure - Invalid category
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      93 |   it('Get all posts by category: Failure - Invalid category', async () => {
+      94 |     const category = 'invalid-category';
+    > 95 |     const response = await request(server).get(`/api/posts/categories/${category}`);
+         |                                            ^
+      96 |
+      97 |     expect(response.status).toBe(HTTP_STATUS.BAD_REQUEST);
+      98 |     expect(JSON.parse(response.text)).toEqual({
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as get] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:95:44)
+
+  ● Integration Tests: Get all featured posts › Get all featured posts: Success
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      103 | describe('Integration Tests: Get all featured posts', () => {
+      104 |   it('Get all featured posts: Success', async () => {
+    > 105 |     const responseFeatured = await request(server).get('/api/posts/featured');
+          |                                                    ^
+      106 |
+      107 |     expect(responseFeatured.status).toBe(HTTP_STATUS.OK);
+      108 |     expect(responseFeatured.body.length).toBeGreaterThan(1);
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as get] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:105:52)
+
+  ● Integration Tests: Get all latest posts › Get all latest posts: Success
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      111 | describe('Integration Tests: Get all latest posts', () => {
+      112 |   it('Get all latest posts: Success', async () => {
+    > 113 |     const responseLatest = await request(server).get('/api/posts/latest');
+          |                                                  ^
+      114 |
+      115 |     expect(responseLatest.status).toBe(HTTP_STATUS.OK);
+      116 |     expect(responseLatest.body.length).toBeGreaterThan(1);
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as get] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:113:50)
+
+  ● Integration Tests: Update Post › Update Post: Success - Update Post of existing ID
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      122 |
+      123 |     const response = await request(server)
+    > 124 |       .patch(`/api/posts/${postId}`)
+          |        ^
+      125 |       .send(createPostObject({ title: 'Updated Post' }));
+      126 |     updatedPost = await Post.findById(postId);
+      127 |
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as patch] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:124:8)
+
+  ● Integration Tests: Update Post › Update Post: Failure - Invalid post ID
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      133 |   it('Update Post: Failure - Invalid post ID', async () => {
+      134 |     const response = await request(server)
+    > 135 |       .patch(`/api/posts/${invalidPostId}`)
+          |        ^
+      136 |       .send(createPostObject({ title: 'Updated Post' }));
+      137 |
+      138 |     expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> [as patch] (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:135:8)
+
+  ● Integration Tests: Delete Post › Delete Post: Success - Removing Post with specific ID
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      146 |     let deletedPost;
+      147 |
+    > 148 |     const response = await request(server).delete(`/api/posts/${postId}`);
+          |                                                  ^
+      149 |
+      150 |     deletedPost = await Post.findById(postId);
+      151 |
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:148:50)
+
+  ● Integration Tests: Delete Post › Delete Post: Failure - Invalid post ID
+
+    TypeError: Cannot read properties of undefined (reading 'address')
+
+      156 |
+      157 |   it('Delete Post: Failure - Invalid post ID', async () => {
+    > 158 |     const response = await request(server).delete(`/api/posts/${invalidPostId}`);
+          |                                                  ^
+      159 |
+      160 |     expect(response.status).toBe(HTTP_STATUS.NOT_FOUND);
+      161 |     expect(JSON.parse(response.text)).toEqual({
+
+      at Test.serverAddress (node_modules/supertest/lib/test.js:46:22)
+      at new Test (node_modules/supertest/lib/test.js:34:14)
+      at Object.obj.<computed> (node_modules/supertest/index.js:43:18)
+      at Object.<anonymous> (tests/integration/controllers/posts-controller.test.ts:158:50)
+
+----------------------|---------|----------|---------|---------|-------------------------------------------------------------------
+File                  | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s                                                 
+----------------------|---------|----------|---------|---------|-------------------------------------------------------------------
+All files             |   28.74 |       21 |   15.09 |   28.84 |                                                                   
+ backend              |   67.74 |        0 |      25 |   67.74 |                                                                   
+  app.ts              |   88.23 |      100 |       0 |   88.23 | 36,40                                                             
+  server.ts           |   42.85 |        0 |      50 |   42.85 | 17-29                                                             
+ backend/config       |   32.69 |     7.14 |       0 |   32.69 |                                                                   
+  db.ts               |       0 |      100 |       0 |       0 | 5-20                                                              
+  passport.ts         |   10.71 |        0 |       0 |   10.71 | 14-49,56,60-65                                                    
+  utils.ts            |   93.33 |       50 |       0 |   93.33 | 23                                                                
+ backend/controllers  |    12.9 |     2.32 |   11.76 |    12.9 |                                                                   
+  auth-controller.ts  |    4.87 |        0 |       0 |    4.87 | 15-70,89-123,142-165,175-251                                      
+  posts-controller.ts |   22.66 |     7.14 |   22.22 |   22.66 | 19-65,72-77,82-87,101-104,109-114,119-129,134-149,154-169,174-186 
+  user-controller.ts  |   10.34 |        0 |       0 |   10.34 | 7-12,19-38,45-55                                                  
+ backend/middlewares  |   12.12 |        0 |       0 |   12.12 |                                                                   
+  auth-middleware.ts  |   11.76 |        0 |       0 |   11.76 | 16-40,50-57                                                       
+  error-middleware.ts |      25 |        0 |       0 |      25 | 5-11                                                              
+  post-middleware.ts  |    8.33 |        0 |       0 |    8.33 | 6-22                                                              
+ backend/models       |      40 |        0 |       0 |      40 |                                                                   
+  post.ts             |     100 |      100 |     100 |     100 |                                                                   
+  user.ts             |   36.84 |        0 |       0 |   36.84 | 92-96,103,107,122,137-141                                         
+ backend/routes       |   72.72 |        0 |       0 |   72.72 |                                                                   
+  auth.ts             |   47.05 |        0 |       0 |   47.05 | 26-38,43-44                                                       
+  posts.ts            |     100 |      100 |     100 |     100 |                                                                   
+  user.ts             |     100 |      100 |     100 |     100 |                                                                   
+ backend/services     |      50 |       50 |      50 |      50 |                                                                   
+  redis.ts            |      50 |       50 |      50 |      50 | 12-22                                                             
+ backend/tests/utils  |     100 |      100 |     100 |     100 |                                                                   
+  helper-objects.ts   |     100 |      100 |     100 |     100 |                                                                   
+ backend/types        |     100 |      100 |     100 |     100 |                                                                   
+  role-type.ts        |     100 |      100 |     100 |     100 |                                                                   
+ backend/utils        |      25 |       20 |   18.18 |   25.53 |                                                                   
+  api-error.ts        |       0 |        0 |       0 |       0 | 22-32                                                             
+  api-response.ts     |       0 |        0 |       0 |       0 | 10-13                                                             
+  async-handler.ts    |      50 |      100 |   33.33 |   66.66 | 5                                                                 
+  cache-posts.ts      |       0 |        0 |       0 |       0 | 6-31                                                              
+  constants.ts        |     100 |      100 |     100 |     100 |                                                                   
+  cookie_options.ts   |     100 |       50 |     100 |     100 | 10-16                                                             
+  middleware.ts       |   22.22 |        0 |      50 |    12.5 | 7-15                                                              
+----------------------|---------|----------|---------|---------|-------------------------------------------------------------------
+Test Suites: 2 failed, 2 total
+Tests:       36 failed, 1 passed, 37 total
+Snapshots:   0 total
+Time:        4.182 s
+Ran all test suites.

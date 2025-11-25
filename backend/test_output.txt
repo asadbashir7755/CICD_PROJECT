@@ -1,0 +1,22 @@
+ts-jest[config] (WARN) 
+    The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+  
+(node:43362) ExperimentalWarning: VM Modules is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/tests/unit/controllers/posts-controller.test.ts:222
+      .mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+                             ^
+Error: Internal Server Error
+    at Object.<anonymous> (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/tests/unit/controllers/posts-controller.test.ts:222:30)
+    at Promise.then.completed (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/utils.js:298:28)
+    at new Promise (<anonymous>)
+    at callAsyncCircusFn (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/utils.js:231:10)
+    at _callCircusTest (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/run.js:316:40)
+    at async _runTest (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/run.js:252:3)
+    at async _runTestsForDescribeBlock (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/run.js:126:9)
+    at async _runTestsForDescribeBlock (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/run.js:121:9)
+    at async run (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/run.js:71:3)
+    at async runAndTransformResultsToJestFormat (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+    at async jestAdapter (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+    at async runTestInternal (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-runner/build/runTest.js:367:16)
+    at async runTest (/home/asadbashir/asad/DevOpS-Practice/ci-cd/gravity_project/wanderlust/backend/node_modules/jest-runner/build/runTest.js:444:34)
