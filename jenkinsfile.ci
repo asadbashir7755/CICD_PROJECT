@@ -9,6 +9,9 @@ pipeline{
         REFRESH_TOKEN_EXPIRES_IN= "${REFRESH_TOKEN_EXPIRES_IN}"
         BACKEND_PORT_HOST= "${BACKEND_PORT_HOST}"
         BACKEND_PORT_CONTAINER= "${BACKEND_PORT_CONTAINER}"
+        BACKEND_IMAGE_TAG= "${BACKEND_IMAGE_TAG}"
+        FRONTEND_IMAGE_TAG= "${FRONTEND_IMAGE_TAG}"
+
         // Frontend vars
         DOCKER_FRONTEND_IMAGE= "${DOCKER_FRONTEND_IMAGE}"
         FRONTEND_PORT_HOST= "${FRONTEND_PORT_HOST}"
@@ -41,7 +44,8 @@ pipeline{
         }
         stage('BuildFrontend'){
             steps{
-                sh 'docker build -t $DOCKER_FRONTEND_IMAGE ./frontend'
+                sh 'docker build -t $DOCKER_FRONTEND_IMAGE -f frontend/Dockerfile .'
+
             }
         }
         stage('Push images to docker hub'){
@@ -52,10 +56,55 @@ pipeline{
                         usernameVariable: 'USER',
                         passwordVariable: "PASS")]){
                     sh 'docker login -u $USER -p $PASS'
-                    sh 'docker tag $DOCKER_BACKEND_IMAGE $USER/$DOCKER_BACKEND_IMAGE'
-                    sh 'docker tag $DOCKER_FRONTEND_IMAGE  $USER/$DOCKER_FRONTEND_IMAGE '
-                    sh 'docker push $USER/$DOCKER_BACKEND_IMAGE '
-                    sh 'docker push $USER/$DOCKER_FRONTEND_IMAGE'
+                    sh 'docker tag $DOCKER_BACKEND_IMAGE $USER/$DOCKER_BACKEND_IMAGE:$BACKEND_IMAGE_TAG'
+                    sh 'docker tag $DOCKER_FRONTEND_IMAGE  $USER/$DOCKER_FRONTEND_IMAGE:$FRONTEND_IMAGE_TAG'
+                    sh 'docker push $DOCKER_BACKEND_IMAGE:$FRONTEND_IMAGE_TAG '
+                    sh 'docker push $DOCKER_FRONTEND_IMAGE:$BACKEND_IMAGE_TAG '
+                }
+            }
+        }
+
+        stage("CD_DOCKERCOMPOSE"){
+            steps{
+                withCredentials([
+                    string(credentialsId: 'JWT_SECRET', variable: 'JWT_SECRET'),
+                    string(credentialsId: 'MONGO_INITDB_ROOT_USERNAME', variable: 'MONGO_INITDB_ROOT_USERNAME'),
+                    string(credentialsId: 'MONGO_INITDB_ROOT_PASSWORD', variable: 'MONGODB_ROOT_PASSWORD'),
+                    string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
+                    string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
+                    string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD')
+                ]){
+
+                sh '''
+                cat > .env <<EOF
+                DOCKER_BACKEND_IMAGE=$DOCKER_BACKEND_IMAGE
+                ACCESS_COOKIE_MAXAGE=$ACCESS_COOKIE_MAXAGE
+                ACCESS_TOKEN_EXPIRES_IN=$ACCESS_TOKEN_EXPIRES_IN
+                REFRESH_COOKIE_MAXAGE=$REFRESH_COOKIE_MAXAGE
+                REFRESH_TOKEN_EXPIRES_IN=$REFRESH_TOKEN_EXPIRES_IN
+                BACKEND_PORT_HOST=$BACKEND_PORT_HOST
+                BACKEND_PORT_CONTAINER=$BACKEND_PORT_CONTAINER
+                BACKEND_IMAGE_TAG=$BACKEND_IMAGE_TAG
+                FRONTEND_IMAGE_TAG=$FRONTEND_IMAGE_TAG
+
+                DOCKER_FRONTEND_IMAGE=$DOCKER_FRONTEND_IMAGE
+                FRONTEND_PORT_HOST=$FRONTEND_PORT_HOST
+                FRONTEND_PORT_CONTAINER=$FRONTEND_PORT_CONTAINER
+                MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
+
+                JWT_SECRET=$JWT_SECRET
+                MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
+                MONGO_INITDB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD
+                GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
+                GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
+                REDIS_PASSWORD=$REDIS_PASSWORD
+
+                REDIS_URL=redis://:$REDIS_PASSWORD@redis:6379
+                MONGODB_URI=mongodb://admin:$MONGODB_ROOT_PASSWORD@mongodb:27017/wanderlust?authSource=admin
+                EOF
+                docker compose -f infra/dockercompose.prod.yml up -d 
+                '''
+
                 }
             }
         }
