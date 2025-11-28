@@ -1,0 +1,70 @@
+pipeline{
+    agent {label 'ubuntuagent'}
+    environment{
+        // Bakend vars
+        DOCKER_BACKEND_IMAGE= "${DOCKER_BACKEND_IMAGE}"
+        ACCESS_COOKIE_MAXAGE= "${ACCESS_COOKIE_MAXAGE}"
+        ACCESS_TOKEN_EXPIRES_IN= "${ACCESS_TOKEN_EXPIRES_IN}"
+        REFRESH_COOKIE_MAXAGE= "${REFRESH_COOKIE_MAXAGE}"
+        REFRESH_TOKEN_EXPIRES_IN= "${REFRESH_TOKEN_EXPIRES_IN}"
+        BACKEND_PORT_HOST= "${BACKEND_PORT_HOST}"
+        BACKEND_PORT_CONTAINER= "${BACKEND_PORT_CONTAINER}"
+        // Frontend vars
+        DOCKER_FRONTEND_IMAGE= "${DOCKER_FRONTEND_IMAGE}"
+        FRONTEND_PORT_HOST= "${FRONTEND_PORT_HOST}"
+        FRONTEND_PORT_CONTAINER= "${FRONTEND_PORT_CONTAINER}"
+        // database name variable
+        MONGO_INITDB_DATABASE= "${MONGO_INITDB_DATABASE}"
+        // secrets
+        JWT_SECRET= credentials('JWT_SECRET')
+        MONGO_INITDB_ROOT_USERNAME= credentials('MONGO_INITDB_ROOT_USERNAME')
+        MONGO_INITDB_ROOT_PASSWORD= credentials('MONGODB_ROOT_PASSWORD')
+        GOOGLE_CLIENT_ID= credentials('GOOGLE_CLIENT_ID')
+        GOOGLE_CLIENT_SECRET= credentials('GOOGLE_CLIENT_SECRET')
+        REDIS_PASSWORD= credentials('REDIS_PASSWORD')
+    }
+    stages{
+        stage("CISTART"){
+            steps{
+                echo "CI PIPELINE IS RUNNING..."  
+            }
+        }
+        stage('Checkout'){
+            steps{
+                git url: 'https://github.com/asadbashir7755/CICD_PROJECT.git' , branch: 'main'
+            }
+        }
+        stage('BuildBackend'){
+            steps{
+                sh 'docker build -t $DOCKER_BACKEND_IMAGE ./backend'
+            }
+        }
+        stage('BuildFrontend'){
+            steps{
+                sh 'docker build -t $DOCKER_FRONTEND_IMAGE ./frontend'
+            }
+        }
+        stage('Push images to docker hub'){
+            steps{
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhublogin',
+                        usernameVariable: 'USER',
+                        passwordVariable: "PASS")]){
+                    sh 'docker login -u $USER -p $PASS'
+                    sh 'docker tag $DOCKER_BACKEND_IMAGE $USER/$DOCKER_BACKEND_IMAGE'
+                    sh 'docker tag $DOCKER_FRONTEND_IMAGE  $USER/$DOCKER_FRONTEND_IMAGE '
+                    sh 'docker push $USER/$DOCKER_BACKEND_IMAGE '
+                    sh 'docker push $USER/$DOCKER_FRONTEND_IMAGE'
+                }
+            }
+        }
+        stage("CIEND"){
+            steps{
+                echo "CI PIPELINE FINISHED"
+            }
+            
+        }
+        
+    }
+}
