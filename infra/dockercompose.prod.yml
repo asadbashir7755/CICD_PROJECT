@@ -1,0 +1,100 @@
+
+networks:
+  wanderlust_app_network:
+    driver: bridge
+
+
+services:
+  backend:
+    container_name: backend
+    image: ${DOCKER_BACKEND_IMAGE}
+    environment:
+      - PORT=${PORT}
+      - ACCESS_COOKIE_MAXAGE=${ACCESS_COOKIE_MAXAGE}
+      - ACCESS_TOKEN_EXPIRES_IN=${ACCESS_TOKEN_EXPIRES_IN}
+      - REFRESH_COOKIE_MAXAGE=${REFRESH_COOKIE_MAXAGE}
+      - REFRESH_TOKEN_EXPIRES_IN=${REFRESH_TOKEN_EXPIRES_IN}
+      - JWT_SECRET=${JWT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - MONGODB_URI=${MONGODB_URI}
+      - REDIS_URL=${REDIS_URL}
+    ports:
+      - ${BACKEND_PORT_HOST}:${BACKEND_PORT_CONTAINER}
+    depends_on:
+      mongo:
+        condition: service_healthy 
+      redis:
+        condition: service_healthy
+    networks:
+      - wanderlust_app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${BACKEND_PORT_CONTAINER}/health"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+  
+  frontend:
+    image: ${DOCKER_FRONTEND_IMAGE}
+    container_name: Frontend
+    ports:
+      - ${FRONTEND_PORT_HOST}:${FRONTEND_PORT_CONTAINER}
+    networks:
+      - wanderlust_app_network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:${FRONTEND_PORT_CONTAINER}"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE}
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+    networks:
+      - wanderlust_app_network
+    healthcheck:
+      test: sh -c "mongosh mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@localhost:27017/admin --eval 'db.adminCommand(\"ping\")'"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+
+  redis:
+    image: redis:7
+    container_name: redis
+    volumes:
+      - redis-data:/data
+    restart: unless-stopped
+    networks:
+      - wanderlust_app_network
+
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  mongo-data:
+  redis-data:
+      
+    
+
+    
