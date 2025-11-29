@@ -24,7 +24,7 @@ pipeline {
         // Secrets
         JWT_SECRET                  = credentials('JWT_SECRET')
         MONGO_INITDB_ROOT_USERNAME  = credentials('MONGO_INITDB_ROOT_USERNAME')
-        MONGODB_ROOT_PASSWORD  = credentials('MONGODB_ROOT_PASSWORD')
+        MONGO_INITDB_ROOT_PASSWORD  = credentials('MONGO_INITDB_ROOT_PASSWORD')
         GOOGLE_CLIENT_ID            = credentials('GOOGLE_CLIENT_ID')
         GOOGLE_CLIENT_SECRET        = credentials('GOOGLE_CLIENT_SECRET')
         REDIS_PASSWORD              = credentials('REDIS_PASSWORD')
@@ -84,7 +84,7 @@ pipeline {
                 withCredentials([
                     string(credentialsId: 'JWT_SECRET', variable: 'JWT_SECRET'),
                     string(credentialsId: 'MONGO_INITDB_ROOT_USERNAME', variable: 'MONGO_INITDB_ROOT_USERNAME'),
-                    string(credentialsId: 'MONGODB_ROOT_PASSWORD', variable: 'MONGODB_ROOT_PASSWORD'),
+                    string(credentialsId: 'MONGO_INITDB_ROOT_PASSWORD', variable: 'MONGO_INITDB_ROOT_PASSWORD'),
                     string(credentialsId: 'GOOGLE_CLIENT_ID', variable: 'GOOGLE_CLIENT_ID'),
                     string(credentialsId: 'GOOGLE_CLIENT_SECRET', variable: 'GOOGLE_CLIENT_SECRET'),
                     string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD')
@@ -116,12 +116,12 @@ MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
 
 JWT_SECRET="$JWT_SECRET"
 MONGO_INITDB_ROOT_USERNAME="$MONGO_INITDB_ROOT_USERNAME"
-MONGODB_ROOT_PASSWORD="$MONGODB_ROOT_PASSWORD"
+MONGO_INITDB_ROOT_PASSWORD="$MONGO_INITDB_ROOT_PASSWORD"
 GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"
 GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"
 REDIS_PASSWORD="$REDIS_PASSWORD"
 
-MONGODB_URI=mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGODB_ROOT_PASSWORD@mongodb:27017/wanderlust?authSource=admin
+MONGODB_URI=mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGO_INITDB_ROOT_PASSWORD@mongodb:27017/wanderlust?authSource=admin
 REDIS_URL=redis://:$REDIS_PASSWORD@redis:6379
 
 
