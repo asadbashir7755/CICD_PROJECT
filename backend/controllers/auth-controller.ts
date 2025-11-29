@@ -162,11 +162,11 @@ export const signOutUser = asyncHandler(async (req: Request, res: Response, next
       );
     }
 
-    // Cookie options for clearing (without maxAge as it's deprecated)
+    // Cookie options for clearing (must match the original cookie settings)
     const clearCookieOptions = {
       httpOnly: true,
-      secure: NODE_ENV === 'production',
-      sameSite: NODE_ENV === 'Development' ? ('lax' as const) : ('none' as const),
+      secure: false,
+      sameSite: 'lax' as const,
       path: '/',
     };
 

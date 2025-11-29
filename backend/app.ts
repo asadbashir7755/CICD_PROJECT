@@ -14,8 +14,8 @@ const app = express();
 
 app.use(
   cors({
-    // added origin
-    origin: [FRONTEND_URL as string, 'http://localhost:3000'],
+    // Accept requests from frontend URL if set, otherwise allow all origins (for Nginx proxy)
+    origin: FRONTEND_URL ? [FRONTEND_URL as string, 'http://localhost:3000'] : true,
     credentials: true,
   })
 );
