@@ -2,8 +2,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import FeaturedPostCard from '@/components/featured-post-card';
 import LatestPostCard from '@/components/latest-post-card';
-import { FeaturedPostCardSkeleton } from '@/components/skeletons/featured-post-card-skeleton';
-import { LatestPostCardSkeleton } from '@/components/skeletons/latest-post-card-skeleton';
 import CategoryPill from '@/components/category-pill';
 import { categories } from '@/utils/category-colors';
 
@@ -11,7 +9,6 @@ export default function BlogFeed() {
   const [selectedCategory, setSelectedCategory] = useState('featured');
   const [posts, setPosts] = useState([]);
   const [latestPosts, setLatestPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const categoryEndpoint =
@@ -19,7 +16,6 @@ export default function BlogFeed() {
         ? '/api/posts/featured'
         : `/api/posts/categories/${selectedCategory}`;
 
-    setLoading(true);
     axios
       .get(import.meta.env.VITE_API_PATH + categoryEndpoint)
       .then((response) => {
@@ -27,7 +23,6 @@ export default function BlogFeed() {
         console.log('Response Data:', response.data);
         console.log('Response Type:', typeof response.data);
         setPosts(response.data);
-        setLoading(false);
       })
       .catch((error) => {
         console.error(error);
