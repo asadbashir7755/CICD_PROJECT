@@ -23,6 +23,9 @@ export default function BlogFeed() {
     axios
       .get(import.meta.env.VITE_API_PATH + categoryEndpoint)
       .then((response) => {
+        console.log('Fetching:', import.meta.env.VITE_API_PATH + categoryEndpoint);
+        console.log('Response Data:', response.data);
+        console.log('Response Type:', typeof response.data);
         setPosts(response.data);
         setLoading(false);
       })
@@ -57,11 +60,11 @@ export default function BlogFeed() {
           <div className="flex flex-col gap-6">
             {posts.length === 0 || loading == true
               ? Array(5)
-                  .fill(0)
-                  .map((_, index) => <FeaturedPostCardSkeleton key={index} />)
+                .fill(0)
+                .map((_, index) => <FeaturedPostCardSkeleton key={index} />)
               : posts
-                  .slice(0, 5)
-                  .map((post, index) => <FeaturedPostCard key={index} post={post} />)}
+                .slice(0, 5)
+                .map((post, index) => <FeaturedPostCard key={index} post={post} />)}
           </div>
         </div>
         <div className="w-full p-4 sm:w-1/3">
@@ -98,11 +101,11 @@ export default function BlogFeed() {
             <div className="flex flex-col gap-4">
               {latestPosts.length === 0
                 ? Array(5)
-                    .fill(0)
-                    .map((_, index) => <LatestPostCardSkeleton key={index} />)
+                  .fill(0)
+                  .map((_, index) => <LatestPostCardSkeleton key={index} />)
                 : latestPosts
-                    .slice(0, 5)
-                    .map((post, index) => <LatestPostCard key={index} post={post} />)}
+                  .slice(0, 5)
+                  .map((post, index) => <LatestPostCard key={index} post={post} />)}
             </div>
           </div>
         </div>
