@@ -9,7 +9,7 @@ services:
     container_name: backend
     image: "${DOCKER_BACKEND_IMAGE}:${BACKEND_IMAGE_TAG}"
     environment:
-      - PORT:${PORT}
+      - PORT=${PORT}
       - ACCESS_COOKIE_MAXAGE=${ACCESS_COOKIE_MAXAGE}
       - ACCESS_TOKEN_EXPIRES_IN=${ACCESS_TOKEN_EXPIRES_IN}
       - REFRESH_COOKIE_MAXAGE=${REFRESH_COOKIE_MAXAGE}
