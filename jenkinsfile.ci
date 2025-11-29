@@ -111,22 +111,31 @@ FRONTEND_PORT_HOST=$FRONTEND_PORT_HOST
 FRONTEND_PORT_CONTAINER=$FRONTEND_PORT_CONTAINER
 MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
 
-JWT_SECRET=$JWT_SECRET
-MONGO_INITDB_ROOT_USERNAME=$MONGO_INITDB_ROOT_USERNAME
-MONGODB_ROOT_PASSWORD=$MONGODB_ROOT_PASSWORD
-GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID
-GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET
-REDIS_PASSWORD=$REDIS_PASSWORD
 
+
+
+JWT_SECRET="$JWT_SECRET"
+MONGO_INITDB_ROOT_USERNAME="$MONGO_INITDB_ROOT_USERNAME"
+MONGODB_ROOT_PASSWORD="$MONGODB_ROOT_PASSWORD"
+GOOGLE_CLIENT_ID="$GOOGLE_CLIENT_ID"
+GOOGLE_CLIENT_SECRET="$GOOGLE_CLIENT_SECRET"
+REDIS_PASSWORD="$REDIS_PASSWORD"
+
+MONGODB_URI=mongodb://$MONGO_INITDB_ROOT_USERNAME:$MONGODB_ROOT_PASSWORD@mongodb:27017/wanderlust?authSource=admin
 REDIS_URL=redis://:$REDIS_PASSWORD@redis:6379
 
-MONGODB_URI=mongodb://admin:$MONGODB_ROOT_PASSWORD@mongodb:27017/wanderlust?authSource=admin
+
+
+
+
 
 
 EOF
 
                         echo "Starting docker compose..."
-                        docker compose -f infra/dockercompose.prod.yml up -d
+                        
+                        docker compose --env-file .env -f infra/dockercompose.prod.yml up -d
+
                         '''
                     }
                 }
