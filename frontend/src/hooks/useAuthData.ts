@@ -2,10 +2,8 @@ import axiosInstance from '@/helpers/axios-instance';
 import { AuthData } from '@/lib/types';
 import userState from '@/utils/user-state';
 import { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
 
 const useAuthData = (): AuthData => {
-  const location = useLocation;
   const user = userState.getUser();
 
   const [data, setData] = useState<AuthData>({
@@ -64,7 +62,7 @@ const useAuthData = (): AuthData => {
       }
     }
     fetchToken();
-  }, [location]);
+  }, [user?._id]);
 
   return data;
 };

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axiosInstance from '@/helpers/axios-instance';
 import { useEffect, useState } from 'react';
 import FeaturedPostCard from '@/components/featured-post-card';
 import LatestPostCard from '@/components/latest-post-card';
@@ -16,10 +16,10 @@ export default function BlogFeed() {
         ? '/api/posts/featured'
         : `/api/posts/categories/${selectedCategory}`;
 
-    axios
-      .get(import.meta.env.VITE_API_PATH + categoryEndpoint)
+    axiosInstance
+      .get(categoryEndpoint)
       .then((response) => {
-        console.log('Fetching:', import.meta.env.VITE_API_PATH + categoryEndpoint);
+        console.log('Fetching:', categoryEndpoint);
         console.log('Response Data:', response.data);
         console.log('Response Type:', typeof response.data);
         setPosts(response.data);
@@ -30,8 +30,8 @@ export default function BlogFeed() {
   }, [selectedCategory]);
 
   useEffect(() => {
-    axios
-      .get(import.meta.env.VITE_API_PATH + '/api/posts/latest')
+    axiosInstance
+      .get('/api/posts/latest')
       .then((response) => {
         setLatestPosts(response.data);
       })
