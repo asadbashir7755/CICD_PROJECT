@@ -3,6 +3,7 @@ FROM node:18-alpine as builder
 
 WORKDIR /app
 COPY package*.json ./
+ENV NPM_CONFIG_IGNORE_SCRIPTS=true
 RUN npm ci --production=false
 COPY . .
 RUN npm run build

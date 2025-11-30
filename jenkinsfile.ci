@@ -38,16 +38,69 @@ pipeline {
             parallel {
                 stage('TestBackend') {
                     steps {
-                        sh 'docker run --rm -v ${WORKSPACE}/backend:/app -w /app node:18-alpine sh -c "npm ci && npm run test:unit"'
+                        script {
+                            // Create a cache directory for node_modules
+                            def backendCacheDir = "${WORKSPACE}/.cache/backend_node_modules"
+
+                            sh """
+                            # Run backend tests in Node Docker container
+                            docker run --rm \\
+                                -v ${WORKSPACE}/backend:/app \\
+                                -v ${backendCacheDir}:/app/node_modules \\
+                                -w /app \\
+                                -e NODE_ENV=test \\
+                                node:18-alpine sh -c "
+                                
+                                # Install dependencies (cached)
+                                if [ ! -d node_modules ]; then npm ci; fi
+                                
+                                # Run unit tests with coverage
+                                npm run test:unit -- --coverage --coverageDirectory=coverage --reporters=default --reporters=jest-junit
+                                "
+                            """
+                        }
+                    }
+                    post {
+                        always {
+                            // Archive test reports and coverage
+                            junit 'backend/coverage/junit.xml'
+                            archiveArtifacts artifacts: 'backend/coverage/lcov-report/**', allowEmptyArchive: true
+                        }
                     }
                 }
-                stage('TestFrontend') {
-                    steps {
-                        sh 'docker run --rm -v ${WORKSPACE}/frontend:/app -w /app node:18-alpine sh -c "npm ci && npm run test"'
-                    }
+
+        stage('TestFrontend') {
+            steps {
+                script {
+                    def frontendCacheDir = "${WORKSPACE}/.cache/frontend_node_modules"
+
+                    sh """
+                    docker run --rm \\
+                        -v ${WORKSPACE}/frontend:/app \\
+                        -v ${frontendCacheDir}:/app/node_modules \\
+                        -w /app \\
+                        -e NODE_ENV=test \\
+                        node:18-alpine sh -c "
+                        
+                        # Install dependencies (cached)
+                        if [ ! -d node_modules ]; then npm ci; fi
+                        
+                        # Run frontend tests with coverage
+                        npm test -- --coverage --coverageDirectory=coverage --reporters=default --reporters=jest-junit
+                        "
+                    """
+                }
+            }
+            post {
+                always {
+                    junit 'frontend/coverage/junit.xml'
+                    archiveArtifacts artifacts: 'frontend/coverage/lcov-report/**', allowEmptyArchive: true
                 }
             }
         }
+    }
+}
+
 
         stage('BuildBackend') {
             steps {

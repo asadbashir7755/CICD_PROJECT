@@ -38,7 +38,7 @@ function getEnv(key: string, required: boolean = false): string {
   return value || '';
 }
 
-const PORT = process.env.PORT || '8082';
+const PORT = process.env.PORT || '8000';
 
 const MONGODB_URI = getEnv('MONGODB_URI', !isTest);
 const REDIS_URL = getEnv('REDIS_URL', !isTest);
@@ -51,8 +51,11 @@ const REFRESH_TOKEN_EXPIRES_IN: TokenExpiry = (process.env.REFRESH_TOKEN_EXPIRES
 
 const JWT_SECRET: string = getEnv('JWT_SECRET', !isTest);
 
-const FRONTEND_URL = getEnv('FRONTEND_URL', NODE_ENV === 'production');
-const BACKEND_URL = getEnv('BACKEND_URL', NODE_ENV === 'production');
+const _frontend = getEnv('FRONTEND_URL', false);
+const _backend = getEnv('BACKEND_URL', false);
+
+const FRONTEND_URL = NODE_ENV === 'production' ? '' : (_frontend || 'http://localhost:3000');
+const BACKEND_URL = NODE_ENV === 'production' ? '' : (_backend || 'http://localhost:8082');
 
 const GOOGLE_CLIENT_ID = getEnv('GOOGLE_CLIENT_ID', false);
 const GOOGLE_CLIENT_SECRET = getEnv('GOOGLE_CLIENT_SECRET', false);
