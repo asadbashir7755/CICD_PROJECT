@@ -17,9 +17,11 @@ RUN addgroup -S app && adduser -S -G app appuser
 COPY --from=builder /app/package*.json ./
 
 RUN apk add --no-cache curl
+
 #install only prod dep
 RUN npm ci --only=production
 COPY --from=builder /app/dist ./dist
+
 # COPY --from=builder /app/src ./src
 EXPOSE 8080
 
