@@ -4,21 +4,32 @@ import request from 'supertest';
 import Post from '../../../models/post.js';
 import User from '../../../models/user.js';
 import app from '../../../app.js';
-import connectDB from '../../../config/db.js';
-import { connectToRedis } from '../../../services/redis.js';
 import { validCategories, HTTP_STATUS, RESPONSE_MESSAGES } from '../../../utils/constants.js';
 import { createPostObject } from '../../utils/helper-objects.js';
 import { Role } from '../../../types/role-type.js';
+import { connectTestDB, closeTestDB, clearTestDB } from '../../utils/test-db-setup.js';
+
+// Mock Redis to avoid external dependency
+jest.mock('../../../services/redis.js', () => ({
+  connectToRedis: jest.fn().mockResolvedValue({
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue('OK'),
+    del: jest.fn().mockResolvedValue(1),
+    quit: jest.fn().mockResolvedValue('OK'),
+  }),
+}));
 
 let token: string;
 const testUserId = '609c16c69405b14574c99999';
 
 beforeAll(async () => {
-  await connectToRedis();
-  await connectDB();
-  await User.deleteMany({});
-  await Post.deleteMany({});
+  // Connect to in-memory MongoDB
+  await connectTestDB();
 
+  // Clear any existing data
+  await clearTestDB();
+
+  // Create test user
   const user = await User.create({
     _id: testUserId,
     userName: 'testuser',
@@ -27,8 +38,10 @@ beforeAll(async () => {
     role: Role.User
   });
 
+  // Generate authentication token
   token = await user.generateAccessToken();
 
+  // Create initial test posts
   await Post.create([
     {
       title: 'Featured Post 1',
@@ -52,9 +65,8 @@ beforeAll(async () => {
 }, 30000);
 
 afterAll(async () => {
-  await User.deleteMany({});
-  await Post.deleteMany({});
-  await mongoose.disconnect();
+  // Clean up and close in-memory database
+  await closeTestDB();
 });
 
 let postId: any;

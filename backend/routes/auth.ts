@@ -10,6 +10,8 @@ import {
   isLoggedIn,
 } from '../controllers/auth-controller.js';
 
+import { FRONTEND_URL, JWT_SECRET, NODE_ENV } from '../config/utils.js';
+
 const router = Router();
 
 //REGULAR EMAIL PASSWORD STRATEGY
@@ -25,17 +27,17 @@ router.get(
   (req: Request, res: Response) => {
     let token = '';
     if (!req.user) {
-      return res.redirect(`${process.env.FRONTEND_URL}/signup?error=auth_failed`);
+      return res.redirect(`${FRONTEND_URL}/signup?error=auth_failed`);
     }
-    if (process.env.JWT_SECRET) {
-      token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    if (JWT_SECRET) {
+      token = jwt.sign({ id: req.user._id }, JWT_SECRET, { expiresIn: '1h' });
     }
     res.cookie('access_token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: NODE_ENV === 'production',
       sameSite: 'lax',
     });
-    res.redirect(`${process.env.FRONTEND_URL}/signup?google-callback=true`);
+    res.redirect(`${FRONTEND_URL}/signup?google-callback=true`);
   }
 );
 

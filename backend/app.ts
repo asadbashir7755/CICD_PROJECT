@@ -8,14 +8,21 @@ import userRouter from './routes/user.js';
 import errorMiddleware from './middlewares/error-middleware.js';
 import passport from './config/passport.js';
 import session from 'express-session';
-import { FRONTEND_URL } from './config/utils.js';
+import { FRONTEND_URL, NODE_ENV } from './config/utils.js';
 
 const app = express();
 
+const allowedOrigins = [FRONTEND_URL as string];
+if (NODE_ENV !== 'production') {
+  allowedOrigins.push('http://localhost:3000');
+  allowedOrigins.push('http://localhost:5173');
+}
+
 app.use(
   cors({
-    // Accept requests from frontend URL if set, otherwise allow all origins (for Nginx proxy)
-    origin: FRONTEND_URL ? [FRONTEND_URL as string, 'http://localhost:3000'] : true,
+    // In production, strictly allow only FRONTEND_URL. In dev, allow localhost too.
+    // If FRONTEND_URL is not set (dev only), fall back to allowing all (or handle as needed)
+    origin: FRONTEND_URL ? allowedOrigins : true,
     credentials: true,
   })
 );

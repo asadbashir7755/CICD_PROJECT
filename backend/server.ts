@@ -1,10 +1,7 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
 import app from './app.js';
 import connectDB from './config/db.js';
 import { connectToRedis } from './services/redis.js';
-import { PORT } from './config/utils.js';
+import { PORT, BACKEND_URL } from './config/utils.js';
 
 console.log('🚀 Starting server...');
 
@@ -20,7 +17,7 @@ async function startServer() {
 
     server = app.listen(port, () => {
       console.log(`✅ Server running on port ${port}`);
-      console.log(`🔗 Backend URL: http://localhost:${port}`);
+      console.log(`🔗 Backend URL: ${BACKEND_URL || `http://localhost:${port}`}`);
     });
 
     return server;
