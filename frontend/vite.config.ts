@@ -1,16 +1,11 @@
-import { defineConfig, UserConfig } from 'vite';
+/// <reference types="vitest" />
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
-// Only import vitest types if running tests
-const isTest = process.env.NODE_ENV === 'test';
-let testConfig: UserConfig['test'] = undefined;
-
-if (isTest) {
-  // Dynamic import so Vitest is only loaded during tests
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { configDefaults } = require('vitest/config.js');
-  testConfig = {
+export default defineConfig({
+  plugins: [react()],
+  test: {
     environment: 'jsdom',
     globals: true,
     coverage: {
@@ -18,17 +13,16 @@ if (isTest) {
     },
     reporters: ['verbose'],
     exclude: [
-      ...configDefaults.exclude,
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/cypress/**',
+      '**/.{idea,git,cache,output,temp}/**',
+      '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
       './src/__tests__/integration-test/home.test.tsx',
       './src/__tests__/App.test.tsx',
     ],
     setupFiles: './test-setup.ts',
-  };
-}
-
-export default defineConfig({
-  plugins: [react()],
-  ...(testConfig ? { test: testConfig } : {}),
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
