@@ -9,11 +9,14 @@ import {
   updatePostHandler,
 } from '../../../controllers/posts-controller.js';
 import Post from '../../../models/post.js';
-import { expect, jest, it, describe } from '@jest/globals';
+import User from '../../../models/user.js';
+import { expect, jest, it, describe, beforeEach } from '@jest/globals';
 import { validCategories, HTTP_STATUS, RESPONSE_MESSAGES } from '../../../utils/constants.js';
 import { createPostObject, createRequestObject, res } from '../../utils/helper-objects.js';
 
-
+beforeEach(() => {
+  jest.clearAllMocks();
+});
 
 describe('createPostHandler', () => {
   it('Post creation: Success - All fields are valid', async () => {
@@ -22,6 +25,7 @@ describe('createPostHandler', () => {
     req.user = { _id: 'testUserId' };
 
     const saveSpy = jest.spyOn(Post.prototype, 'save').mockImplementationOnce(() => Promise.resolve(postObject));
+    jest.spyOn(User, 'findByIdAndUpdate').mockResolvedValueOnce({} as any);
 
     await createPostHandler(req, res);
 
@@ -82,10 +86,11 @@ describe('createPostHandler', () => {
     const req: any = createRequestObject({ body: postObject });
     req.user = { _id: 'testUserId' };
 
-    const saveSpy = jest.spyOn(Post.prototype, 'save').mockImplementationOnce(() => Promise.resolve(postObject));
+    const saveSpy = jest.spyOn(Post.prototype, 'save').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
 
     await createPostHandler(req, res);
 
+    expect(saveSpy).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     expect(res.json).toHaveBeenCalledWith({
       message: RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR,
@@ -113,7 +118,7 @@ describe('getAllPostsHandler', () => {
 
   it('Get all posts: Failure - Internal Server Error', async () => {
     const req: any = createRequestObject();
-    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
     await getAllPostsHandler(req, res);
 
     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
@@ -143,7 +148,7 @@ describe('getFeaturedPostsHandler', () => {
 
   it('Get featured posts: Failure - Internal Server Error', async () => {
     const req: any = createRequestObject();
-    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
     await getFeaturedPostsHandler(req, res);
 
     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
@@ -183,7 +188,7 @@ describe('getPostByCategoryHandler', () => {
   it('Get posts by category: Failure - Internal Server Error', async () => {
     const req: any = createRequestObject({ params: { category: validCategories[1] } });
 
-    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
 
     await getPostByCategoryHandler(req, res);
 
@@ -204,7 +209,10 @@ describe('getLatestPostsHandler', () => {
       createPostObject({ title: 'Test Post - 3' }),
     ];
 
-    jest.spyOn(Post, 'find').mockResolvedValueOnce(mockPosts);
+    const mockQuery = {
+      sort: jest.fn().mockResolvedValueOnce(mockPosts)
+    };
+    jest.spyOn(Post, 'find').mockReturnValueOnce(mockQuery as any);
 
     await getLatestPostsHandler(req, res);
 
@@ -215,7 +223,10 @@ describe('getLatestPostsHandler', () => {
   it('Get latest posts: Failure - Internal Server Error', async () => {
     const req: any = createRequestObject();
 
-    jest.spyOn(Post, 'find').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    const mockQuery = {
+      sort: jest.fn().mockImplementationOnce(() => Promise.reject(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR)))
+    };
+    jest.spyOn(Post, 'find').mockReturnValueOnce(mockQuery as any);
 
     await getLatestPostsHandler(req, res);
 
@@ -254,7 +265,7 @@ describe('getPostByIdHandler', () => {
   it('Get post by ID: Failure - Internal Server Error', async () => {
     const req: any = createRequestObject({ params: { id: '6910293383' } });
 
-    jest.spyOn(Post, 'findById').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'findById').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
 
     await getPostByIdHandler(req, res);
 
@@ -304,7 +315,7 @@ describe('updatePostHandler', () => {
       body: { title: 'Updated Post' },
     });
     // Mock the behavior of Post.findByIdAndUpdate
-    jest.spyOn(Post, 'findByIdAndUpdate').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'findByIdAndUpdate').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
     await updatePostHandler(req, res);
 
     expect(res.status).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
@@ -320,8 +331,9 @@ describe('deletePostByIdHandler', () => {
 
     const mockPost = createPostObject({ _id: '6910293383' });
 
-    // Mock the behavior of Post.findByIdAndRemove
+    // Mock the behavior of Post.findByIdAndDelete and User.findByIdAndUpdate
     jest.spyOn(Post, 'findByIdAndDelete').mockResolvedValueOnce(mockPost);
+    jest.spyOn(User, 'findByIdAndUpdate').mockResolvedValueOnce({} as any);
 
     await deletePostByIdHandler(req, res);
 
@@ -334,9 +346,8 @@ describe('deletePostByIdHandler', () => {
   it('Delete Post: Failure - Post not found (Specified post ID is invalid)', async () => {
     const req: any = createRequestObject({ params: { id: '6910293383' } });
 
-    // Mock the behavior of Post.findByIdAndRemove
-
-    jest.spyOn(Post, 'findByIdAndDelete').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    // Mock the behavior of Post.findByIdAndDelete to return null (not found)
+    jest.spyOn(Post, 'findByIdAndDelete').mockResolvedValueOnce(null);
 
     await deletePostByIdHandler(req, res);
 
@@ -348,7 +359,7 @@ describe('deletePostByIdHandler', () => {
     const req: any = createRequestObject({ params: { id: '6910293383' } });
 
     // Mock the behavior of Post.findByIdAndRemove
-    jest.spyOn(Post, 'findByIdAndDelete').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR));
+    jest.spyOn(Post, 'findByIdAndDelete').mockRejectedValueOnce(new Error(RESPONSE_MESSAGES.COMMON.INTERNAL_SERVER_ERROR) as any);
 
     await deletePostByIdHandler(req, res);
 

@@ -64,7 +64,7 @@ export const createPostHandler = async (req: Request, res: Response) => {
 
     res.status(HTTP_STATUS.OK).json(savedPost);
   } catch (err: any) {
-    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
   }
 };
 

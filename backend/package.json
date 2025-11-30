@@ -39,6 +39,8 @@
   },
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose --coverage",
+    "test:unit": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose --coverage tests/unit",
+    "test:integration": "NODE_OPTIONS=--experimental-vm-modules jest --detectOpenHandles --verbose --coverage tests/integration",
     "build": "tsc",
     "start": "npm run build && node dist/server.js",
     "dev": "nodemon --exec \"npx tsx\" server.ts",
