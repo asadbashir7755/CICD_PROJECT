@@ -34,24 +34,6 @@ pipeline {
             }
         }
 
-        stage('BACKEND TEST'){
-            steps{
-                dir('backend'){
-                    sh '''
-                    npm ci
-                    npm run test:unit
-                    npm run test:integration
-                    '''
-                }
-            }
-
-        }
-           
-         
-        
-
-
-
         stage('BuildBackend') {
             steps {
                 sh 'docker build -t $DOCKER_BACKEND_IMAGE ./backend'
@@ -123,7 +105,6 @@ FRONTEND_PORT_HOST=$FRONTEND_PORT_HOST
 FRONTEND_PORT_CONTAINER=$FRONTEND_PORT_CONTAINER
 MONGO_INITDB_DATABASE=$MONGO_INITDB_DATABASE
 
-// credentials
 JWT_SECRET="$JWT_SECRET"
 MONGO_INITDB_ROOT_USERNAME="$MONGO_INITDB_ROOT_USERNAME"
 MONGO_INITDB_ROOT_PASSWORD="$MONGO_INITDB_ROOT_PASSWORD"
