@@ -5,7 +5,7 @@ export default {
     transform: {
         '^.+\\.tsx?$': ['ts-jest', { useESM: true, isolatedModules: true }],
     },
-    globalTeardown: '<rootDir>/tests/teardown.ts',
+    globalTeardown: '<rootDir>/tests/teardown.js',
     moduleNameMapper: {
         '^(\\.{1,2}/.*)\\.js$': '$1',
     },

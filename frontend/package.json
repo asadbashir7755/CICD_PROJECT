@@ -10,6 +10,8 @@
     "preview": "vite preview",
     "format": "prettier --write .",
     "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:integration": "vitest run",
     "coverage": "vitest run --coverage "
   },
   "lint-staged": {

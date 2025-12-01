@@ -44,6 +44,32 @@ pipeline {
                     '''
                 }
             }
+        }
+
+
+        stage('BACKEND TEST'){
+            steps{
+                dir('backend'){
+                    sh '''
+                    npm ci
+                    npm run test:unit
+                    npm run test:integration
+                    '''
+                }
+            }
+
+        }
+
+        stage('FRONTEND TEST'){
+            steps{
+                dir('frontend'){
+                    sh '''
+                    npm ci
+                    npm run test:unit
+                    npm run test:integration
+                    '''
+                }
+            }
 
         }
            
